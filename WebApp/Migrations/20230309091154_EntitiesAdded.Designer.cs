@@ -4,6 +4,7 @@ using Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230309091154_EntitiesAdded")]
+    partial class EntitiesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,31 @@ namespace WebApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AuthorBooks", b =>
+                {
+                    b.Property<Guid>("id_author")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("id_book")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("id_author", "id_book");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("id_book");
+
+                    b.ToTable("authors_books", (string)null);
+                });
 
             modelBuilder.Entity("Entities.Identity.AppRole", b =>
                 {
@@ -140,23 +168,6 @@ namespace WebApp.Migrations
                     b.ToTable("authors", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.Library.AuthorBookRelation", b =>
-                {
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_author");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_book");
-
-                    b.HasKey("AuthorId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("authors_books", (string)null);
-                });
-
             modelBuilder.Entity("Entities.Library.Book", b =>
                 {
                     b.Property<Guid>("Id")
@@ -166,8 +177,7 @@ namespace WebApp.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_category");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
@@ -181,16 +191,13 @@ namespace WebApp.Migrations
                         .HasColumnName("name");
 
                     b.Property<Guid>("PressId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_press");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ThemeId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_theme");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("pk_books");
@@ -382,25 +389,19 @@ namespace WebApp.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_book");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DateIn")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("date_in");
+                    b.Property<DateTime>("DateIn")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOut")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("date_out")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("LibrarianId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("StudentId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_student");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("pk_scards");
@@ -455,25 +456,19 @@ namespace WebApp.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_book");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DateIn")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("date_in");
+                    b.Property<DateTime>("DateIn")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOut")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("date_out")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("LibrarianId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TeacherId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_teacher");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("pk_tcards");
@@ -650,23 +645,31 @@ namespace WebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.Library.AuthorBookRelation", b =>
+            modelBuilder.Entity("AuthorBooks", b =>
                 {
-                    b.HasOne("Entities.Library.Author", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Entities.Library.Book", "Book")
                         .WithMany()
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("BookId");
+
+                    b.HasOne("Entities.Library.Author", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
+                    b.HasOne("Entities.Library.Author", null)
+                        .WithMany()
+                        .HasForeignKey("id_author")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.HasOne("Entities.Library.Book", null)
+                        .WithMany()
+                        .HasForeignKey("id_book")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Book");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Entities.Library.Book", b =>

@@ -8,7 +8,7 @@ namespace Entities.Library
         public Librarian? Librarian { get; set; }
         public Student? Student { get; set; }
         public DateTime DateOut { get; set; }       
-        public DateTime DateIn { get; set; }
+        public DateTime? DateIn { get; set; }
 
         public Guid StudentId { get; set; }
         public Guid BookId { get; set; }

@@ -41,7 +41,10 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
         e.Property(f => f.Id)
          .HasColumnName("id")
          //.ValueGeneratedOnAdd()
-         .HasDefaultValueSql("NEWID()"); ;
+         .HasDefaultValueSql("NEWID()");
+
+        e.HasIndex(x => x.Name)
+         .IsUnique();
 
         e.Property(e => e.Name)
             .HasColumnName("name")
@@ -64,6 +67,9 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
             .HasMaxLength(64)
             .IsRequired(true)
             .IsUnicode(true);
+
+        e.HasIndex(x => x.Name)
+         .IsUnique();
 
         e.Property(e => e.FacultyId)
            .HasColumnName("id_faculty");
@@ -171,7 +177,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
             .HasColumnName("last_name")
             .HasMaxLength(128)
             .IsRequired(true);
-    }
+    }    
     void OnCreateBook(EntityTypeBuilder<Book> e)
     {
         e.ToTable("books");
@@ -190,6 +196,18 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
          .IsRequired()
          .HasMaxLength(128)
          .HasColumnName("name");
+
+        e.Property(x => x.Quantity)
+         .HasColumnName("quantity");
+
+        e.Property(x => x.CategoryId)
+         .HasColumnName("id_category");
+
+        e.Property(x => x.ThemeId)
+         .HasColumnName("id_theme");
+
+        e.Property(x => x.PressId)
+         .HasColumnName("id_press");
 
         e.Property(x => x.Description)
          .IsRequired(false)
@@ -213,14 +231,156 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 
         e.HasMany(x => x.Authors)
          .WithMany(x => x.Books)
-         .UsingEntity<AuthorBookRelation>("AuthorBooks",
-            x => x.HasOne<Author>().WithMany().HasForeignKey("id_author"),
-            x => x.HasOne<Book>().WithMany().HasForeignKey("id_book"),
+         .UsingEntity<AuthorBookRelation>(
+            x => x.HasOne(x=>x.Author).WithMany().HasForeignKey(x=>x.AuthorId),
+            x => x.HasOne(x=>x.Book).WithMany().HasForeignKey(x=>x.BookId),
             x =>
             {
-                x.HasKey("id_author", "id_book");
+                x.Property(x=>x.AuthorId).HasColumnName("id_author");
+                x.Property(x => x.BookId).HasColumnName("id_book");
+                x.HasKey( x => new {x.AuthorId, x.BookId});                
                 x.ToTable("authors_books");
             });
+    }
+    void OnCreateTheme(EntityTypeBuilder<Theme> e)
+    {
+        e.ToTable("themes");
+        e.HasKey(e => e.Id)
+         .HasName("pk_themes");
+
+        e.Property(f => f.Id)
+         .HasColumnName("id")
+         //.ValueGeneratedOnAdd()
+         .HasDefaultValueSql("NEWID()"); ;
+
+        e.HasIndex(x => x.Name)
+         .IsUnique();
+
+        e.Property(e => e.Name)
+            .HasColumnName("name")
+            .IsRequired(true)
+            .IsUnicode(true)
+            .HasMaxLength(256);
+
+    }
+    void OnCreateCategry(EntityTypeBuilder<Category> e)
+    {
+        e.ToTable("categories");
+        e.HasKey(e => e.Id)
+         .HasName("pk_categories");
+
+        e.Property(f => f.Id)
+         .HasColumnName("id")
+         //.ValueGeneratedOnAdd()
+         .HasDefaultValueSql("NEWID()"); ;
+
+        e.HasIndex(x => x.Name)
+         .IsUnique();
+
+        e.Property(e => e.Name)
+            .HasColumnName("name")
+            .IsRequired(true)
+            .IsUnicode(true)
+            .HasMaxLength(256);
+    }
+    void OnCreatePress(EntityTypeBuilder<Press> e)
+    {
+        e.ToTable("press");
+        e.HasKey(e => e.Id)
+         .HasName("pk_press");
+
+        e.Property(f => f.Id)
+         .HasColumnName("id")
+         //.ValueGeneratedOnAdd()
+         .HasDefaultValueSql("NEWID()"); ;
+
+        e.HasIndex(x => x.Name)
+         .IsUnique();
+
+        e.Property(e => e.Name)
+            .HasColumnName("name")
+            .IsRequired(true)
+            .IsUnicode(true)
+            .HasMaxLength(256);
+
+    }
+    void OnCreateSCard(EntityTypeBuilder<SCard> e)
+    {
+        e.ToTable("s_cards");
+
+        e.HasKey(e => e.Id)
+            .HasName("pk_scards");
+
+        e.Property(f => f.Id)
+            .HasColumnName("id")
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
+
+        e.Property(x => x.DateOut)
+            .HasColumnName("date_out")
+            .IsRequired(true)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        e.Property(x => x.DateIn)
+            .HasColumnName("date_in")
+            .IsRequired(false);
+
+        e.Property(x => x.BookId)
+           .HasColumnName("id_book");
+
+        e.Property(x => x.StudentId)
+          .HasColumnName("id_student");
+
+        e.HasOne(x => x.Librarian)
+            .WithMany(x => x.SCards)
+            .HasForeignKey(x => x.LibrarianId);
+
+        e.HasOne(x => x.Book)
+            .WithMany(x => x.SCards)
+            .HasForeignKey(x => x.BookId);
+
+        e.HasOne(x => x.Student)
+            .WithMany(x => x.SCards)
+            .HasForeignKey(x => x.StudentId);
+    }
+    void OnCreateTCard(EntityTypeBuilder<TCard> e)
+    {
+        e.ToTable("t_cards");
+
+        e.HasKey(e => e.Id)
+            .HasName("pk_tcards");
+
+        e.Property(f => f.Id)
+            .HasColumnName("id")
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
+
+        e.Property(x => x.DateOut)
+         .HasColumnName("date_out")
+         .IsRequired(true)
+         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        e.Property(x => x.DateIn)
+            .HasColumnName("date_in")
+            .IsRequired(false);
+
+        e.Property(x => x.BookId)
+           .HasColumnName("id_book");
+
+        e.Property(x => x.TeacherId)
+          .HasColumnName("id_teacher");
+
+        e.HasOne(x => x.Librarian)
+            .WithMany(x => x.TCards)
+            .HasForeignKey(x => x.LibrarianId);
+
+        e.HasOne(x => x.Book)
+            .WithMany(x => x.TCards)
+            .HasForeignKey(x => x.BookId);
+
+        e.HasOne(x => x.Teacher)
+            .WithMany(x => x.TCards)
+            .HasForeignKey(x => x.TeacherId);
     }
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -235,9 +395,13 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
         builder.Entity<Librarian>(OnCreateLibrarian);
         builder.Entity<Author>(OnCreateAuthor);
 
-
         builder.Entity<Book>(OnCreateBook);
+        builder.Entity<Category>(OnCreateCategry);
+        builder.Entity<Theme>(OnCreateTheme);
+        builder.Entity<Press>(OnCreatePress);
 
+        builder.Entity<SCard>(OnCreateSCard);
+        builder.Entity<TCard>(OnCreateTCard);
 
         builder.Entity<Faculty>().HasData(new Faculty { Id= new Guid("162767f4-e375-4451-9568-7bba759ddbf7"), Name = "Программирования" });
         builder.Entity<Faculty>().HasData(new Faculty { Id= new Guid("16fe2a8c-bd23-45af-a1f0-cacd67cfaf3b"), Name = "Администрирования" });

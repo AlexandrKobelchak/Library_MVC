@@ -4,6 +4,7 @@ using Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230309095304_EntitiesErrorsFixed_2")]
+    partial class EntitiesErrorsFixed_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,33 @@ namespace WebApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AuthorBooks", b =>
+                {
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id_author");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id_book");
+
+                    b.Property<Guid?>("AuthorId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BookId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("AuthorId1");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("BookId1");
+
+                    b.ToTable("authors_books", (string)null);
+                });
 
             modelBuilder.Entity("Entities.Identity.AppRole", b =>
                 {
@@ -138,23 +168,6 @@ namespace WebApp.Migrations
                         .HasName("pk_authors");
 
                     b.ToTable("authors", (string)null);
-                });
-
-            modelBuilder.Entity("Entities.Library.AuthorBookRelation", b =>
-                {
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_author");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id_book");
-
-                    b.HasKey("AuthorId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("authors_books", (string)null);
                 });
 
             modelBuilder.Entity("Entities.Library.Book", b =>
@@ -650,19 +663,27 @@ namespace WebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.Library.AuthorBookRelation", b =>
+            modelBuilder.Entity("AuthorBooks", b =>
                 {
-                    b.HasOne("Entities.Library.Author", "Author")
+                    b.HasOne("Entities.Library.Author", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Library.Book", "Book")
+                    b.HasOne("Entities.Library.Author", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId1");
+
+                    b.HasOne("Entities.Library.Book", null)
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Entities.Library.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId1");
 
                     b.Navigation("Author");
 
