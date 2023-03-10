@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Context;
 using Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Domain;
+using Repositories.Abstract;
+using Repositories;
 
 namespace WebApp
 {
@@ -15,7 +18,22 @@ namespace WebApp
 
             builder.Services.AddDbContext<AppDbContext>(
                 options => options.UseSqlServer(connectionString,
-                ob=>ob.MigrationsAssembly("WebApp")));
+                ob => ob.MigrationsAssembly("WebApp")));
+
+            builder.Services.AddTransient<DbContext, AppDbContext>();
+            builder.Services.AddTransient<IBookRepository, BookRepository>();
+            builder.Services.AddTransient<IFacultyRepository, FacultyRepository>();
+            builder.Services.AddTransient<IGroupRepository, GroupRepository>();
+            builder.Services.AddTransient<IStudentRepository, StudentRepository>();
+            builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddTransient<ITeacherRepository, TeacherRepository>();
+            builder.Services.AddTransient<ILibrarianRepository, LibrarianRepository>();
+            builder.Services.AddTransient<IThemeRepository, ThemeRepository>();
+            builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddTransient<IPressRepository, PressRepository>();
+            builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
+            builder.Services.AddTransient<ISCardRepository, SCardRepository>();
+            builder.Services.AddTransient<ITCardRepository, TCardRepository>();
 
             builder.Services.AddDefaultIdentity<AppUser>()
                 .AddRoles<AppRole>()
@@ -67,10 +85,10 @@ namespace WebApp
 
             var app = builder.Build();
 
-            using(var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
+            using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
             {
                 AppDbContext? context = serviceScope?.ServiceProvider.GetRequiredService<AppDbContext>();
-                if(context!=null)
+                if (context != null)
                 {
                     context.Database.Migrate();
                 }
@@ -91,7 +109,7 @@ namespace WebApp
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            
+
             app.MapRazorPages();
 
             app.Run();

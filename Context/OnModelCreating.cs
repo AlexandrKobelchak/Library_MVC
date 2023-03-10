@@ -15,7 +15,7 @@ namespace Context;
 
 public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
-    void OnCreateFaculty(EntityTypeBuilder<Faculty> e)
+    void OnCreateFaculty(EntityTypeBuilder<Press> e)
     {
         e.ToTable("faculties");
         e.HasKey(e => e.Id)
@@ -386,7 +386,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<Faculty>(OnCreateFaculty);
+        builder.Entity<Press>(OnCreateFaculty);
         builder.Entity<Group>(OnCreateGroup);
         builder.Entity<Student>(OnCreateStudent);
       
@@ -403,9 +403,9 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
         builder.Entity<SCard>(OnCreateSCard);
         builder.Entity<TCard>(OnCreateTCard);
 
-        builder.Entity<Faculty>().HasData(new Faculty { Id= new Guid("162767f4-e375-4451-9568-7bba759ddbf7"), Name = "Программирования" });
-        builder.Entity<Faculty>().HasData(new Faculty { Id= new Guid("16fe2a8c-bd23-45af-a1f0-cacd67cfaf3b"), Name = "Администрирования" });
-        builder.Entity<Faculty>().HasData(new Faculty { Id= new Guid("2b71cbb1-2783-4b70-bffa-f1e196015ba6"), Name = "Компьютерной графики и дизайна" });
+        builder.Entity<Press>().HasData(new Press { Id= new Guid("162767f4-e375-4451-9568-7bba759ddbf7"), Name = "Программирования" });
+        builder.Entity<Press>().HasData(new Press { Id= new Guid("16fe2a8c-bd23-45af-a1f0-cacd67cfaf3b"), Name = "Администрирования" });
+        builder.Entity<Press>().HasData(new Press { Id= new Guid("2b71cbb1-2783-4b70-bffa-f1e196015ba6"), Name = "Компьютерной графики и дизайна" });
     }
 }
 

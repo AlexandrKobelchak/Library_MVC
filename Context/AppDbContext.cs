@@ -8,7 +8,7 @@ namespace Context;
 
 public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
-    public DbSet<Faculty> Faculties { get; set; }
+    public DbSet<Press> Faculties { get; set; }
     public DbSet<Group> Groups { get; set; }    
     public DbSet<Student> Students { get; set; }
     public DbSet<Department> Departments { get; set; }
@@ -23,7 +23,8 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<Author> Authors { get; set; }
 
 
-    public AppDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) 
+        : base(options)
     {
     }
 }
