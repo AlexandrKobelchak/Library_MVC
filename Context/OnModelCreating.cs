@@ -15,7 +15,7 @@ namespace Context;
 
 public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
-    void OnCreateFaculty(EntityTypeBuilder<Press> e)
+    void OnCreateFaculty(EntityTypeBuilder<Faculty> e)
     {
         e.ToTable("faculties");
         e.HasKey(e => e.Id)
@@ -386,7 +386,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<Press>(OnCreateFaculty);
+        builder.Entity<Faculty>(OnCreateFaculty);
         builder.Entity<Group>(OnCreateGroup);
         builder.Entity<Student>(OnCreateStudent);
       

@@ -12,6 +12,7 @@ namespace Repositories.Generic
     public class DbRepository<T> : IDbRepository<T> where T : class, IDbEntity
     {
         private DbContext _context;
+        public DbContext Context { get => _context; } 
 
         public DbRepository(DbContext context)
         {

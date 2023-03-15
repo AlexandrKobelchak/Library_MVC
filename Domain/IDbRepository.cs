@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Domain
 {
     public interface IDbRepository<T> where T : class, IDbEntity
     {
+        DbContext Context { get; }
         IQueryable<T> AllItems { get; }
         Task<List<T>> ToListAsync();
         Task<bool> AddItemAsync(T item);
