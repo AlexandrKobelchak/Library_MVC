@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Domain;
 using Repositories.Abstract;
 using Repositories;
+using BL.Models;
+using BL.Services;
 
 namespace WebApp
 {
@@ -34,6 +36,8 @@ namespace WebApp
             builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
             builder.Services.AddTransient<ISCardRepository, SCardRepository>();
             builder.Services.AddTransient<ITCardRepository, TCardRepository>();
+
+            builder.Services.AddTransient<StudentVMService>();
 
             builder.Services.AddDefaultIdentity<AppUser>()
                 .AddRoles<AppRole>()
